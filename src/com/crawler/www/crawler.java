@@ -10,8 +10,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.Queue;;
 
@@ -68,16 +66,16 @@ public class crawler {
 	
 	private static void Parse(String URL, parseType t)throws IOException{
 		Document doc = Jsoup.connect(URL).timeout(30000)
-				.userAgent(
-						"Mozilla/5.0 (Windows NT 6.1; WOW64)")
+				 .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+			      .referrer("http://www.google.com")
 				.get();
 		Elements buttons = doc.getElementsByClass(t.getclassID());
-		String lastLink = null;
 		switch(t){
 		case PRODUCT:
 			for(Element button:buttons){
 				Elements links = button.getElementsByTag("a");
-				SaveProduct(links.get(0).attr("href"));
+				Elements name = button.getElementsByTag("h2");
+				SaveProduct(links.get(0).attr("href"),name.get(0).attr("data-attribute"));
 				}
 			break;
 		case NEXTLINK:
@@ -103,12 +101,21 @@ public class crawler {
 	
 	
 	
-	private static void SaveProduct(String URL)throws IOException{
+	private static void SaveProduct(String URL, String ProductName)throws IOException{
+		if(URL==null){
+			
+		}
+		else if(URL.startsWith("www")){
+			URL = "http://"+URL;
+		}
+		else if(URL.startsWith("/")){
+			URL = Domain+URL;
+		}
 		Document doc = Jsoup.connect(URL).timeout(30000)
-				.userAgent(
-						"Mozilla/5.0 (Windows NT 6.1; WOW64)")
+				 .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+			      .referrer("http://www.google.com")
 				.get();
-		try (PrintWriter out = new PrintWriter(StorageCount.toString()+".html")) {
+		try (PrintWriter out = new PrintWriter(ProductName.substring(0, 15)+".html")) {
 			out.println(doc.body());
 		}
 		StorageCount++;
