@@ -77,13 +77,9 @@ public class crawler {
 		case PRODUCT:
 			for(Element button:buttons){
 				Elements links = button.getElementsByTag("a");
-				for(Element link:links){
-					if(!link.attr("href").equals(lastLink)){
-						SaveProduct(link.attr("href"));
-						lastLink = link.attr("href");
-					}
+				SaveProduct(links.get(0).attr("href"));
 				}
-			}
+			break;
 		case NEXTLINK:
 			for(Element button :buttons){
 				String link = button.attr("href");
@@ -100,6 +96,8 @@ public class crawler {
 					AddQueue(link);
 				}
 			}
+			break;
+			default:
 		}
 	}
 	
